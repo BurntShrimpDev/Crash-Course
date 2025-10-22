@@ -13,10 +13,10 @@ class CRASHCOURSE_API UCC_AbilitySystemComponent : public UAbilitySystemComponen
 	GENERATED_BODY()
 
 public:
-	UCC_AbilitySystemComponent();
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-	                           FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void OnGiveAbility(FGameplayAbilitySpec& AbilitySpec) override;
+	virtual void OnRep_ActivateAbilities() override;
 
-protected:
-	virtual void BeginPlay() override;
+private:
+
+	void HandleAutoActivatedAbility(const FGameplayAbilitySpec& AbilitySpec);
 };
