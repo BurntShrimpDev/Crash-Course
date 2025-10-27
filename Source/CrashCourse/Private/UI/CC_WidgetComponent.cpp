@@ -15,7 +15,10 @@ void UCC_WidgetComponent::BeginPlay()
 	if (!bIsASCInitialized())
 	{
 		CrashCharacter->OnASCInitialized.AddDynamic(this, &ThisClass::OnASCInitialized);
+		return;
 	}
+
+	InitialAttributesDelegate();
 }
 
 void UCC_WidgetComponent::InitAbilitySystemData()
@@ -30,10 +33,29 @@ bool UCC_WidgetComponent::bIsASCInitialized() const
 	return AbilitySystemComponent.IsValid() && AttributeSet.IsValid();
 }
 
+void UCC_WidgetComponent::InitialAttributesDelegate()
+{
+	if (!AttributeSet->bAttributesInitialized)
+	{
+		AttributeSet->OnAttributesInitialized.AddDynamic(this, &ThisClass::UCC_WidgetComponent::BindToAttributeChanges);
+	}
+	else
+	{
+		BindToAttributeChanges();
+	}
+}
+
 void UCC_WidgetComponent::OnASCInitialized(UAbilitySystemComponent* ASC, UAttributeSet* AS)
 {
 	AbilitySystemComponent = Cast<UCC_AbilitySystemComponent>(CrashCharacter->GetAbilitySystemComponent());
 	AttributeSet = Cast<UCC_AttributeSet>(CrashCharacter->GetAttributeSet());
 
-	// Todo: Check if the AttributeSet has been initialized with initial values, if not bind to some delegate that will broadcast when it is initialized.
+	if (!bIsASCInitialized()) return;
+	InitialAttributesDelegate();
+	
+}
+
+void UCC_WidgetComponent::BindToAttributeChanges()
+{
+	//Todo: Listen for changes for gameplay Attributes and update our widget accordingly. 
 }
