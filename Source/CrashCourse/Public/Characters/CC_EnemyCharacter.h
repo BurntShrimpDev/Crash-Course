@@ -22,6 +22,7 @@ public:
 protected:
 
 	virtual void BeginPlay() override;
+	virtual UAttributeSet* GetAttributeSet() const override;
 
 private:
 	UPROPERTY(VisibleAnywhere)

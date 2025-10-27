@@ -32,10 +32,16 @@ void ACC_EnemyCharacter::BeginPlay()
 	if (!IsValid(GetAbilitySystemComponent())) return;
 
 	GetAbilitySystemComponent()->InitAbilityActorInfo(this, this);
+	OnASCInitialized.Broadcast(GetAbilitySystemComponent(), GetAttributeSet());
 
 	if (!HasAuthority()) return;
 	GiveStartupAbilities();
 	InitializeAttributes();
+}
+
+UAttributeSet* ACC_EnemyCharacter::GetAttributeSet() const
+{
+	return AttributeSet;
 }
 
 
