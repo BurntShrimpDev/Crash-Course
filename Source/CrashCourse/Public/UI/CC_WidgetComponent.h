@@ -24,6 +24,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditAnywhere)
 	TMap<FGameplayAttribute, FGameplayAttribute> AttributeMap;
 private:
 	TWeakObjectPtr<ACC_BaseCharacter> CrashCharacter;

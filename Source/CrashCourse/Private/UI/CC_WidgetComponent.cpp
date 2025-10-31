@@ -39,7 +39,7 @@ void UCC_WidgetComponent::InitialAttributesDelegate()
 {
 	if (!AttributeSet->bAttributesInitialized)
 	{
-		AttributeSet->OnAttributesInitialized.AddDynamic(this, &ThisClass::UCC_WidgetComponent::BindToAttributeChanges);
+		AttributeSet->OnAttributesInitialized.AddDynamic(this, &ThisClass::BindToAttributeChanges);
 	}
 	else
 	{
@@ -65,8 +65,8 @@ void UCC_WidgetComponent::BindWidgetToAttributeChange(UWidget* WidgetObject,
 
 void UCC_WidgetComponent::OnASCInitialized(UAbilitySystemComponent* ASC, UAttributeSet* AS)
 {
-	AbilitySystemComponent = Cast<UCC_AbilitySystemComponent>(CrashCharacter->GetAbilitySystemComponent());
-	AttributeSet = Cast<UCC_AttributeSet>(CrashCharacter->GetAttributeSet());
+	AbilitySystemComponent = Cast<UCC_AbilitySystemComponent>(ASC);
+	AttributeSet = Cast<UCC_AttributeSet>(AS);
 
 	if (!bIsASCInitialized()) return;
 	InitialAttributesDelegate();
@@ -77,7 +77,8 @@ void UCC_WidgetComponent::BindToAttributeChanges()
 	for (const TTuple<FGameplayAttribute, FGameplayAttribute>& Pair : AttributeMap)
 	{
 		BindWidgetToAttributeChange(GetUserWidgetObject(), Pair); // Checking the owned widget object
-		GetUserWidgetObject()->WidgetTree->ForEachWidget([this, Pair](UWidget* ChildWidget)
+		
+		GetUserWidgetObject()->WidgetTree->ForEachWidget([this, &Pair](UWidget* ChildWidget)
 		{
 			BindWidgetToAttributeChange(ChildWidget, Pair);
 		});
