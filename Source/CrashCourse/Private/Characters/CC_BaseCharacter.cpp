@@ -68,3 +68,13 @@ void ACC_BaseCharacter::HandleRespawn()
 {
 	bAlive = true;
 }
+
+void ACC_BaseCharacter::ResetAttributes()
+{
+	checkf(IsValid(ResetAttributeEffect), TEXT("ResetAttributeEffect not set."));
+
+	FGameplayEffectContextHandle ContextHandle = GetAbilitySystemComponent()->MakeEffectContext();
+	FGameplayEffectSpecHandle SpecHandle = GetAbilitySystemComponent()->MakeOutgoingSpec(
+		ResetAttributeEffect, 1, ContextHandle);
+	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+}
