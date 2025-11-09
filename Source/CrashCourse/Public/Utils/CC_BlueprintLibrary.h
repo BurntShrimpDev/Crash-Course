@@ -19,6 +19,19 @@ enum EHitDirection : uint8
 	Back
 };
 
+USTRUCT(BlueprintType)
+struct FClosestActorWithTagResult
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(BlueprintReadWrite)
+	TWeakObjectPtr<AActor> Actor;
+
+	UPROPERTY(BlueprintReadWrite)
+	float Distance{0.f};
+	
+};
+
 UCLASS()
 class CRASHCOURSE_API UCC_BlueprintLibrary : public UBlueprintFunctionLibrary
 {
@@ -30,4 +43,7 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	static FName GetHitDirectionName(const EHitDirection& HitDirection);
+
+	UFUNCTION(BlueprintCallable)
+	static FClosestActorWithTagResult FindClosestActorWithTag(const UObject* WorldContextObject, const FVector& Origin, const FName& Tag);
 };
