@@ -14,6 +14,6 @@ public class CrashCourse : ModuleRules
 			"GameplayTags", "UMG"
 		});
 
-		PrivateDependencyModuleNames.AddRange(new string[] { });
+		PrivateDependencyModuleNames.AddRange(new string[] { "AIModule" });
 	}
 }

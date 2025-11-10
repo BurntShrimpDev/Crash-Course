@@ -2,8 +2,11 @@
 
 
 #include "Characters/CC_EnemyCharacter.h"
+
+#include "AIController.h"
 #include "AbilitySystem/CC_AbilitySystemComponent.h"
 #include "AbilitySystem/CC_AttributeSet.h"
+
 
 
 // Sets default values
@@ -46,6 +49,15 @@ void ACC_EnemyCharacter::BeginPlay()
 UAttributeSet* ACC_EnemyCharacter::GetAttributeSet() const
 {
 	return AttributeSet;
+}
+
+void ACC_EnemyCharacter::HandleDeath()
+{
+	Super::HandleDeath();
+
+	AAIController* AIController = GetController<AAIController>();
+	if (!IsValid(AIController)) return;
+	AIController->StopMovement();
 }
 
 

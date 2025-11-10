@@ -33,6 +33,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Crash|AI")
 	float MaxAttackDelay{.5f};
 
+	virtual void HandleDeath() override;
+
 private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
