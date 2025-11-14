@@ -19,9 +19,6 @@ public:
 	ACC_EnemyCharacter();
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
-protected:
-
-	virtual void BeginPlay() override;
 	virtual UAttributeSet* GetAttributeSet() const override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Crash|AI")
@@ -32,6 +29,14 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Crash|AI")
 	float MaxAttackDelay{.5f};
+
+	UFUNCTION(BlueprintImplementableEvent)
+	float GetTimelineLength();
+
+protected:
+
+	virtual void BeginPlay() override;
+	
 
 	virtual void HandleDeath() override;
 
