@@ -97,6 +97,11 @@ void UCC_SearchForTarget::MoveToTargetAndAttack()
 
 void UCC_SearchForTarget::AttackTarget(TEnumAsByte<EPathFollowingResult::Type> Result, AAIController* AIController)
 {
+	if (Result != EPathFollowingResult::Success)
+	{
+		StartSearch();
+		return;
+	}
 	OwningEnemy->RotateToTarget(TargetBaseCharacter.Get());
 	
 	AttackDelayTask = UAbilityTask_WaitDelay::WaitDelay(this, OwningEnemy->GetTimelineLength());
