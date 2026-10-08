@@ -60,10 +60,7 @@ FClosestActorWithTagResult UCC_BlueprintLibrary::FindClosestActorWithTag(UObject
 		if (!IsValid(BaseCharacter) || !BaseCharacter->IsAlive()) continue;
 
 		const float Distance = FVector::Dist(Origin, Actor->GetActorLocation());
-		if (ACC_BaseCharacter* SearchingCharacter = Cast<ACC_BaseCharacter>(WorldContextObject); IsValid(SearchingCharacter))
-		{
-			if (Distance > SearchingCharacter->SearchRange) continue;
-		}
+		if (Distance > SearchRange) continue;
 		if (Distance < ClosestDistance)
 		{
 			ClosestDistance = Distance;
