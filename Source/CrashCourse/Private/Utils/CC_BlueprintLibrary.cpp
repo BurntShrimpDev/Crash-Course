@@ -4,6 +4,7 @@
 #include "Utils/CC_BlueprintLibrary.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemGlobals.h"
 #include "AbilitySystem/CC_AttributeSet.h"
 #include "Characters/CC_BaseCharacter.h"
 #include "Characters/CC_EnemyCharacter.h"
@@ -105,12 +106,21 @@ void UCC_BlueprintLibrary::SendDamageEventToPlayer(AActor* Target, const TSubcla
 	UAbilitySystemComponent* TargetASC = PlayerCharacter->GetAbilitySystemComponent();
 	if (!IsValid(TargetASC)) return;
 
-	FGameplayEffectContextHandle ContextHandle = TargetASC->MakeEffectContext();
-	FGameplayEffectSpecHandle SpecHandle = TargetASC->MakeOutgoingSpec(DamageEffect, 1.f, ContextHandle);
+	// Build the spec from the attacker's ASC so the context's instigator is the attacker (used for KillScored).
+	// Fall back to the target's ASC if the instigator doesn't have one.
+	UAbilitySystemComponent* SourceASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Payload.Instigator);
+	if (!IsValid(SourceASC))
+	{
+		SourceASC = TargetASC;
+	}
+
+	FGameplayEffectContextHandle ContextHandle = SourceASC->MakeEffectContext();
+	FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffect, 1.f, ContextHandle);
+	if (!SpecHandle.IsValid()) return;
 
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DataTag, -Damage);
 
-	TargetASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+	SourceASC->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(), TargetASC);
 }
 
 void UCC_BlueprintLibrary::SendDamageEventToPlayers(TArray<AActor*> Targets,
