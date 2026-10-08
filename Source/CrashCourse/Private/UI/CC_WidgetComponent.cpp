@@ -14,6 +14,7 @@ void UCC_WidgetComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	InitAbilitySystemData();
+	if (!CrashCharacter.IsValid()) return; // Only works on CC_BaseCharacter owners
 	if (!bIsASCInitialized())
 	{
 		CrashCharacter->OnASCInitialized.AddDynamic(this, &ThisClass::OnASCInitialized);
@@ -26,6 +27,7 @@ void UCC_WidgetComponent::BeginPlay()
 void UCC_WidgetComponent::InitAbilitySystemData()
 {
 	CrashCharacter = Cast<ACC_BaseCharacter>(GetOwner());
+	if (!CrashCharacter.IsValid()) return;
 	AttributeSet = Cast<UCC_AttributeSet>(CrashCharacter->GetAttributeSet());
 	AbilitySystemComponent = Cast<UCC_AbilitySystemComponent>(CrashCharacter->GetAbilitySystemComponent());
 }
@@ -57,10 +59,14 @@ void UCC_WidgetComponent::BindWidgetToAttributeChange(UWidget* WidgetObject,
 
 	AttributeWidget->OnAttributeChange(Pair, AttributeSet.Get(), 0.f); // for initial values
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Key).AddLambda(
-		[this, AttributeWidget, &Pair](const FOnAttributeChangeData& AttributeChangeData)
+	// The ASC can outlive this component (the player's lives on the PlayerState), so bind weakly to this component
+	// and hold the widget weakly too
+	TWeakObjectPtr<UCC_AttributeWidget> WeakAttributeWidget = AttributeWidget;
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Key).AddWeakLambda(this,
+		[this, WeakAttributeWidget, &Pair](const FOnAttributeChangeData& AttributeChangeData)
 		{
-			AttributeWidget->OnAttributeChange(Pair, AttributeSet.Get(), AttributeChangeData.OldValue); // for live gameplay changes
+			if (!WeakAttributeWidget.IsValid()) return;
+			WeakAttributeWidget->OnAttributeChange(Pair, AttributeSet.Get(), AttributeChangeData.OldValue); // for live gameplay changes
 		});
 }
 
