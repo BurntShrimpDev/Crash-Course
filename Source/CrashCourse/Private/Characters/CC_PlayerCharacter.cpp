@@ -1,7 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Callum Brogan.
 
 
-#include "CrashCourse/Public/Characters/CC_PlayerCharacter.h"
+#include "Characters/CC_PlayerCharacter.h"
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/CC_AttributeSet.h"

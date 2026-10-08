@@ -1,3 +1,5 @@
+// Copyright Callum Brogan.
+
 #include "GameplayTags/CCTags.h"
 
 namespace CCTags

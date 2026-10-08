@@ -1,7 +1,7 @@
 // Copyright Callum Brogan.
 
 
-#include "CrashCourse/Public/Player/CC_PlayerController.h"
+#include "Player/CC_PlayerController.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "EnhancedInputSubsystems.h"

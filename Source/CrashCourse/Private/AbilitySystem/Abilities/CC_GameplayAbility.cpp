@@ -3,8 +3,7 @@
 
 #include "AbilitySystem/Abilities/CC_GameplayAbility.h"
 
-#include "LevelInstance/LevelInstanceTypes.h"
-#include "WorldPartition/WorldPartitionRuntimeCell.h"
+#include "Engine/Engine.h"
 
 void UCC_GameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                           const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,

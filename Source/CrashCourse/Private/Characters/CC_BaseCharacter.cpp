@@ -1,7 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Callum Brogan.
 
 
-#include "CrashCourse/Public/Characters/CC_BaseCharacter.h"
+#include "Characters/CC_BaseCharacter.h"
 #include "AbilitySystemComponent.h"
 #include "Net/UnrealNetwork.h"
 

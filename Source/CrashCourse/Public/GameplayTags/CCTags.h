@@ -1,3 +1,5 @@
+// Copyright Callum Brogan.
+
 #pragma once
 
 #include "CoreMinimal.h"
