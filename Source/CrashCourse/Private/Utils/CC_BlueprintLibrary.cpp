@@ -193,10 +193,12 @@ void UCC_BlueprintLibrary::DrawHitBoxOverlapDebugs(const UObject* WorldContextOb
 TArray<AActor*> UCC_BlueprintLibrary::ApplyKnockback(AActor* AvatarActor, const TArray<AActor*>& HitActors, float InnerRadius,
 	float OuterRadius, float LaunchForceMagnitude, float RotationAngle, bool bDrawDebugs)
 {
+	if (!IsValid(AvatarActor)) return TArray<AActor*>();
+
 	for (AActor* HitActor : HitActors)
 	{
 		ACharacter* HitCharacter = Cast<ACharacter>(HitActor);
-		if (!IsValid(HitCharacter) || !IsValid(AvatarActor)) return TArray<AActor*>();
+		if (!IsValid(HitCharacter)) continue;
 
 		const FVector HitCharacterLocation = HitCharacter->GetActorLocation();
 		const FVector AvatarLocation = AvatarActor->GetActorLocation();
