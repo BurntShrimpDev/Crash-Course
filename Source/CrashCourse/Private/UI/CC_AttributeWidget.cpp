@@ -14,5 +14,5 @@ void UCC_AttributeWidget::OnAttributeChange(const TTuple<FGameplayAttribute, FGa
 
 bool UCC_AttributeWidget::MatchesAttributes(const TTuple<FGameplayAttribute, FGameplayAttribute>& Pair) const
 {
-	return Attribute == Pair.Key & MaxAttribute == Pair.Value;
+	return Attribute == Pair.Key && MaxAttribute == Pair.Value;
 }
