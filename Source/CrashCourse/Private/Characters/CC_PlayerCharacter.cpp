@@ -74,8 +74,10 @@ void ACC_PlayerCharacter::PossessedBy(AController* NewController)
 
 	UCC_AttributeSet* CC_AttributeSet = Cast<UCC_AttributeSet>(GetAttributeSet());
 	if (!IsValid(CC_AttributeSet)) return;
-	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(CC_AttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
-	
+	// PossessedBy can run more than once (e.g. re-possession), so clear any previous binding first
+	FOnGameplayAttributeValueChange& HealthChangedDelegate = GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(CC_AttributeSet->GetHealthAttribute());
+	HealthChangedDelegate.RemoveAll(this);
+	HealthChangedDelegate.AddUObject(this, &ThisClass::OnHealthChanged);
 }
 
 void ACC_PlayerCharacter::OnRep_PlayerState()
@@ -87,9 +89,7 @@ void ACC_PlayerCharacter::OnRep_PlayerState()
 	GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(), this);
 	OnASCInitialized.Broadcast(GetAbilitySystemComponent(), GetAttributeSet());
 
-	UCC_AttributeSet* CC_AttributeSet = Cast<UCC_AttributeSet>(GetAttributeSet());
-	if (!IsValid(CC_AttributeSet)) return;
-	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(CC_AttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
+	// Death is handled on the server only (PossessedBy); bAlive replicates down to clients
 }
 
 
