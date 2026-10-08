@@ -37,6 +37,9 @@ The goal here isn’t flashy gameplay. It’s **clarity and correctness** — so
 1. Clone this repo  
    ```bash
    git clone https://github.com/BurntShrimpDev/Crash-Course.git
+   ```
+2. Right-click `CrashCourse.uproject` and choose **Generate Visual Studio project files**.
+3. Open the solution, build **Development Editor | Win64**, then launch.
 
 ---
 ### Notes
