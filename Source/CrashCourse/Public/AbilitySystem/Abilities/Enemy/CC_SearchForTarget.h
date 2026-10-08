@@ -13,7 +13,7 @@ namespace EPathFollowingResult
 
 class UAITask_MoveTo;
 class ACC_BaseCharacter;
-class UCC_WaitGameplayEvent;
+class UAbilityTask_WaitGameplayEvent;
 class UAbilityTask_WaitDelay;
 class AAIController;
 class ACC_EnemyCharacter;
@@ -36,7 +36,7 @@ public:
 private:
 
 	UPROPERTY()
-	TObjectPtr<UCC_WaitGameplayEvent> WaitGameplayEventTask;
+	TObjectPtr<UAbilityTask_WaitGameplayEvent> WaitGameplayEventTask;
 
 	UPROPERTY()
 	TObjectPtr<UAbilityTask_WaitDelay> SearchDelayTask;

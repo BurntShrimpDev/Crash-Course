@@ -5,9 +5,8 @@
 
 #include "AbilitySystemComponent.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
-#include "Abilities/Async/AbilityAsync_WaitGameplayEvent.h"
+#include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AIController.h"
-#include "AbilitySystem/AbilityTasks/CC_WaitGameplayEvent.h"
 #include "Characters/CC_EnemyCharacter.h"
 #include "GameplayTags/CCTags.h"
 #include "Tasks/AITask_MoveTo.h"
@@ -33,34 +32,38 @@ void UCC_SearchForTarget::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 
 	StartSearch();
 
-	WaitGameplayEventTask = UCC_WaitGameplayEvent::WaitGameplayEventToActorProxy(
-		GetAvatarActorFromActorInfo(), CCTags::Events::Enemy::EndAttack);
+	// An ability task is owned by this ability and cleaned up when it ends, unlike a Blueprint async action
+	WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, CCTags::Events::Enemy::EndAttack);
 	WaitGameplayEventTask->EventReceived.AddDynamic(this, &ThisClass::EndAttackEventReceived);
-	WaitGameplayEventTask->StartActivation();
+	WaitGameplayEventTask->ReadyForActivation();
 }
 
 void UCC_SearchForTarget::StartSearch()
 {
-	if (bDrawDebugs) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red,
-	                                                  FString::Printf(TEXT("UCC_SearchForTarget::StartSearch")));
+	if (bDrawDebugs && IsValid(GEngine))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, TEXT("UCC_SearchForTarget::StartSearch"));
+	}
 	if (!OwningEnemy.IsValid()) return;
 
 	const float SearchDelay = FMath::RandRange(OwningEnemy->MinAttackDelay, OwningEnemy->MaxAttackDelay);
 	SearchDelayTask = UAbilityTask_WaitDelay::WaitDelay(this, SearchDelay);
 	SearchDelayTask->OnFinish.AddDynamic(this, &ThisClass::Search);
-	SearchDelayTask->Activate();
+	SearchDelayTask->ReadyForActivation();
 }
 
 void UCC_SearchForTarget::EndAttackEventReceived(FGameplayEventData Payload)
 {
 	if (OwningEnemy.IsValid() && !OwningEnemy->bIsBeingLaunched)
-	StartSearch();
+	{
+		StartSearch();
+	}
 }
 
 void UCC_SearchForTarget::Search()
 {
-	const FVector SearchOrigin = GetAvatarActorFromActorInfo()->GetActorLocation();
 	if (!OwningEnemy.IsValid()) return;
+	const FVector SearchOrigin = OwningEnemy->GetActorLocation();
 	FClosestActorWithTagResult ClosestActorResult = UCC_BlueprintLibrary::FindClosestActorWithTag(
 		GetAvatarActorFromActorInfo(), SearchOrigin, CrashTags::Player, OwningEnemy->SearchRange);
 
@@ -104,15 +107,19 @@ void UCC_SearchForTarget::AttackTarget(TEnumAsByte<EPathFollowingResult::Type> R
 		StartSearch();
 		return;
 	}
+	if (!OwningEnemy.IsValid() || !TargetBaseCharacter.IsValid()) return;
 	OwningEnemy->RotateToTarget(TargetBaseCharacter.Get());
 	
 	AttackDelayTask = UAbilityTask_WaitDelay::WaitDelay(this, OwningEnemy->GetTimelineLength());
 	AttackDelayTask->OnFinish.AddDynamic(this, &ThisClass::Attack);
-	AttackDelayTask->Activate();
+	AttackDelayTask->ReadyForActivation();
 }
 
 void UCC_SearchForTarget::Attack()
 {
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo();
+	if (!IsValid(ASC)) return;
+
 	const FGameplayTag AttackTag = CCTags::CCAbilities::Enemy::Attack;
-	GetAbilitySystemComponentFromActorInfo()->TryActivateAbilitiesByTag(AttackTag.GetSingleTagContainer());
+	ASC->TryActivateAbilitiesByTag(AttackTag.GetSingleTagContainer());
 }
