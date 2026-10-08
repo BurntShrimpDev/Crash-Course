@@ -21,9 +21,9 @@ EHitDirection UCC_BlueprintLibrary::GetHitDirection(const FVector& TargetForward
 	}
 	if (Dot < 0.5f)
 	{
-		// Either Left or Right
+		// Either Left or Right: the sign of the cross product's Z says which side the instigator is on
 		const FVector Cross = FVector::CrossProduct(TargetForward, ToInstigator);
-		if (Cross.Z < 0.5f)
+		if (Cross.Z < 0.f)
 		{
 			return EHitDirection::Left;
 		}
@@ -32,7 +32,7 @@ EHitDirection UCC_BlueprintLibrary::GetHitDirection(const FVector& TargetForward
 	return EHitDirection::Front;
 }
 
-FName UCC_BlueprintLibrary::GetHitDirectionName(const EHitDirection& HitDirection)
+FName UCC_BlueprintLibrary::GetHitDirectionName(EHitDirection HitDirection)
 {
 	switch (HitDirection)
 	{
